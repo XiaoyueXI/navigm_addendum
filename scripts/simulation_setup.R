@@ -1,11 +1,49 @@
 library(ggplot2)
 library(navigm)
+
 # Set up args for the simulation
 #
-# base
-args <- list(corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = F, hub = F)
-# sensitivity
 
+# base
+args <- list(corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+# low 
+args <- list(Q=3, zeta=-1.55, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+# null
+args <- list(Q0=0, zeta = -1.85, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = F, hub = F)
+
+# sensitivity
+#
+args <- list(P=50, corr= 0, zeta = -1.55, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N=100, corr= 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N=100, P=50, corr= 0,zeta = -1.55, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+args <- list(Q=20, corr= 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q=100, corr= 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q0=1, corr= 0, zeta = -0.75, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q0=5, corr= 0, zeta = -2.1, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(zeta=-1.25, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(zeta=-1.75, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(noise = 0.2, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(noise = 0.3, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+# runtime
+#
+args <- list(N = 20, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 50, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 150, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 250, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 300, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+# args <- list(P = 20, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 150, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 200, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 250, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 300, zeta= -1.55, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+# args <- list(Q = 150, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# empirical = T in the function simulate_auxiliary_matrix requires P >= Q
 
 # number of replicates
 #
@@ -27,7 +65,7 @@ if(! "Q" %in% names(args)){
 }
 
 if(! "Q0" %in% names(args)){
-  args$Q0 <- 0
+  args$Q0 <- 3
 }
 
 if(! "zeta" %in% names(args)){
@@ -48,12 +86,12 @@ if(! "corr" %in% names(args)){
 
 list2env(args, envir = .GlobalEnv)
 
-# if codata is included
-# hub structure is on
+# hub = T if codata (auxiliary variables) are included
+#
 if (codata) {
   
   if(hub == F){
-    warning("hub structure exists if codata are included.")
+    warning("hub structure exists if codata= T.")
     hub <- T
   }
   
@@ -103,7 +141,8 @@ dir.create(dirname)
 setwd(dirname)
 
 
-# correlation between codata
+# correlation between auxiliary variables
+# 
 # 
 if(!is.null(dpar)){
   
@@ -155,23 +194,26 @@ if(!is.null(dpar)){
   # image(Sigma)
   
 }
+# we only consider correlation = 0
+# attempted correlation scenarios - not impact results
 
 #
 sparsity_v <- c()
+
 for(seed in 1:nrep){
   
   #
   set.seed(seed)
   
+  # generate and plot auxiliary variables
   # even codata = F generate V for algorithm testing. 
-  
-  # generate and plot codata
   #
-  V <- generate_V(P, Q, min_gene = round(0.05 * P)) 
+  V <- simulate_auxiliary_matrix(P, Q, min_gene = round(0.05 * P)) 
   if(verbose == T){
+    cat('Active variables per nodes: \n')
     print(quantile(apply(V, 2, function(x)sum(x>0.5))))
   }
- 
+  
   # plot V
   #
   tmp <- reshape::melt(V)
@@ -182,12 +224,14 @@ for(seed in 1:nrep){
     labs(x='auxiliary variables', y='nodes')
   ggsave(paste0('V',seed,'.pdf'), width = 4, height = 4)
   
+  # plot V correlation
+  #
   pdf(paste0('Vhist',seed,'.pdf'),width = 6, height = 3)
   hist(cor(V)[upper.tri(cor(V))],xlim = c(-1,1), xlab = 'empirical correlations', main = 'correlation between auxiliary variables')
   dev.off()
   
   
-  # fix nonzero_id across replicates
+  # fix nonzero_id across replicates for visualisation
   #
   if(seed == 1){
     
@@ -202,8 +246,7 @@ for(seed in 1:nrep){
     }else{
       
       # only a few variables are correlated
-      #
-      # select 10% of correlated variables
+      # select 10% of correlated variables and set to active
       #
       ncorr_index <- max(1, round(length(corr_index) * 0.1))
       #
@@ -222,7 +265,7 @@ for(seed in 1:nrep){
   }
   
   
-
+  
   if (codata) {
     
     # adjacency matrix
@@ -246,7 +289,7 @@ for(seed in 1:nrep){
     delta[noise_id] <- 1
     delta[noise_id[,c(2,1)]] <- 1
     
-    # plot inclusion probs
+    # plot simulated edge PPIs 
     #
     pdf(paste0('ppi',seed,'.pdf'), height = 6, width = 4)
     hist(pe[upper.tri(pe)], xlab = 'edge inclusion probability', main = '')
@@ -259,6 +302,7 @@ for(seed in 1:nrep){
     if (hub) {
       
       # random hub propensities
+      # not considered in the paper
       #
       mu_theta <- 0.6
       v_theta <- 0.3
@@ -280,14 +324,16 @@ for(seed in 1:nrep){
     }
   }
   
-  # generate data
+  # generate precision matrices and data
   # 
-  net <- generate_data_from_adjancency(N,A=delta)
+  net <- simulate_data_from_adjacency_matrix(N,A=delta)
   
   
   # plot the simulated data
   #
   cat('Plot the simulated data ... \n')
+  
+  # adjacency matrix
   A <- reshape::melt(net$A)
   ggplot(A, aes(X1,X2, fill = value)) +
     geom_tile() +
@@ -302,6 +348,7 @@ for(seed in 1:nrep){
     height = 4
   )
   
+  # precision matrix
   Omega <- reshape::melt(net$Omega)
   ggplot(Omega, aes(X1, X2, fill = value)) +
     geom_tile() +
@@ -316,22 +363,27 @@ for(seed in 1:nrep){
     height = 4
   )
   
-  EOmega <- reshape::melt(solve(cov(net$Y)))
-  ggplot(EOmega, aes(X1,X2, fill = value)) +
-    geom_tile() +
-    scale_x_discrete(expand = c(0, 0)) +
-    scale_y_discrete(expand = c(0, 0)) +
-    labs(x = '', y = '', fill = 'empirical \n Omega') +
-    theme(axis.text.x = element_blank(),
-          axis.text.y = element_blank())
-  ggsave(
-    paste0('simulated_empirical_precision_matrix', seed, '.pdf'),
-    width = 4.5,
-    height = 4
-  )
-
+  # empirical precision matrix if invertable
+  try({
+    EOmega <- reshape::melt(solve(cov(net$Y)))
+    ggplot(EOmega, aes(X1,X2, fill = value)) +
+      geom_tile() +
+      scale_x_discrete(expand = c(0, 0)) +
+      scale_y_discrete(expand = c(0, 0)) +
+      labs(x = '', y = '', fill = 'empirical \n Omega') +
+      theme(axis.text.x = element_blank(),
+            axis.text.y = element_blank())
+    ggsave(
+      paste0('simulated_empirical_precision_matrix', seed, '.pdf'),
+      width = 4.5,
+      height = 4
+    )
+  })
+  
+  #
   save(net, V, beta_true, file = paste0('data_seed', seed, '.rda'))
   
+  # sparsity track
   bool_up <- upper.tri(net$A)
   sparsity_v <- c(sparsity_v, sum(net$A[bool_up] == 1)/sum(bool_up))
   
@@ -340,8 +392,47 @@ for(seed in 1:nrep){
   }
 }
 
-
+# sparsity summary across replicates
 if(verbose){
   print(quantile(sparsity_v))
+  print(mean(sparsity_v))
 }
 
+
+
+
+# sparsity_m <- matrix(nrow = 23, ncol = 32)
+# count <- 0
+# for (dir in c('~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0/',
+#               '~/simulation_n_200_p_100_q_3_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_0_zeta_-1.85_noise_0.1_beta0_0.5_codata_FALSE_hub_FALSE_corr_0',
+#               '~/simulation_n_200_p_50_q_50_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_100_p_100_q_50_q0_3_zeta_-1.52_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_100_p_50_q_50_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_20_q0_3_zeta_-1.52_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_100_q0_3_zeta_-1.52_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_1_zeta_-0.75_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_5_zeta_-2.1_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.25_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.75_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.5_noise_0.2_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.5_noise_0.3_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_20_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_50_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_150_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_250_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_300_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_150_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_200_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_250_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
+#               '~/simulation_n_200_p_300_q_50_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0')){
+#   setwd(dir)
+#   count <- count + 1
+#   for(i in 1:32){
+#     load(paste0('data_seed',i,'.rda'))
+#     bool_up <- upper.tri(net$A)
+#     sparsity_m[count,i] <- sum(net$A[bool_up] == 1)/sum(bool_up)
+#   }
+# }
+#
+# plot(apply(sparsity_m, 1, function(x)c(mean(x), median(x), min(x), max(x)))[1,-c(11,12)])
