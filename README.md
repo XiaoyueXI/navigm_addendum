@@ -1,7 +1,6 @@
 # navigm_addendum
 Supplementary code accompanying the paper:
 
-A hierarchical framework for inferring and leveraging node-level information in Bayesian networks (2023). Xiaoyue Xi, Sylvia Richardson, Hélène Ruffieux.
+A modelling framework for detecting and leveraging node-level information in Bayesian network inference (2023). Xiaoyue Xi, Hélène Ruffieux.
 
-The repository contains scripts for the simulation experiments and sensitivity analyses to assess the robustness of [navigm](https://github.com/XiaoyueXI/navigm) to the choice of hyperparameters controlling the prior mean and variance of the network sparsity and data generation. 
-
+The repository contains scripts for simulation experiments that assess the performance of navigm and its robustness to hyperpriors on network sparsity and data generation scenarios. Additionally, we provide the code for the application to the monocyte expression network.
