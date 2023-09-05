@@ -536,7 +536,7 @@ dev.off()
 
 # runtime
 #
-round(mean(unlist(pt_em)), 2)
+round(mean(unlist(pt_em)), 2)/60
 round(sd(unlist(pt_em))/length(unlist(pt_em)), 2)
 round(mean(unlist(pt_vbem)), 2)
 round(sd(unlist(pt_vbem))/length(unlist(pt_vbem)), 2)
@@ -590,7 +590,7 @@ for (dirname in vec_dirnames){
     #
     load(paste0('data_seed',seed,'.rda'))
     bool_up <- upper.tri(net$A)
-    sim_sparsity[[dirname]] <- sum(net$A[bool_up])/sum(bool_up)
+    sim_sparsity[[dirname]] <- c(sim_sparsity[[dirname]], sum(net$A[bool_up])/sum(bool_up))
     
     # gmss
     #
@@ -687,7 +687,7 @@ tmp <- dcast(df, rn~variable, value.var = 'label')
 tmp[,rn := factor(rn, vec_dirnames)]
 
 setkey(tmp, rn)
-xtable::xtable(tmp[,c('rn','pauc_GM','pauc_GMN','pauc_GMSS','pauc_GMSS_c')])
+print(xtable(tmp[,c('rn','pauc_GM','pauc_GMN','pauc_GMSS','pauc_GMSS_c')]), include.rownames=FALSE)
 
 #
 # create table for runtime
@@ -707,7 +707,7 @@ tmp <- dcast(df, rn~variable, value.var = 'label')
 tmp[,rn := factor(rn, vec_dirnames)]
 
 setkey(tmp, rn)
-xtable::xtable(tmp[,c('rn','time_GM','time_GMN','time_GMSS')])
+print(xtable(tmp[,c('rn','time_GM','time_GMN','time_GMSS')]), include.rownames = F)
 
 
 #######################
@@ -1067,7 +1067,8 @@ for (seed in 1:32) {
 
 tmp <- df_model_criteria[,list(aic = which.min(aic),
                                pauc = which.max(pauc),
-                               paucc = which.max(paucc)),by = 'seed']
+                               paucc = which.max(paucc)
+                               ),by = 'seed']
 
 df_model_criteria <- melt(df_model_criteria, id.vars = c('v0', 'seed'))
 df_model_criteria_summary <- df_model_criteria[,list(M = mean(value),
@@ -1078,8 +1079,8 @@ df_model_criteria_summary[,U:= M + 1.96 * SD/sqrt(N)]
 df_model_criteria_summary[, minM := min(M), by = 'variable']
 df_model_criteria_summary[, maxM := max(M), by = 'variable']
 df_model_criteria_summary[, type := 'general']
-df_model_criteria_summary[!grepl('auc',variable) & M == minM, type := 'best']
-df_model_criteria_summary[grepl('auc',variable) & M == maxM, type := 'best']
+df_model_criteria_summary[!grepl('pauc',variable) & M == minM, type := 'best']
+df_model_criteria_summary[variable == 'pauc' & M == maxM, type := 'best']
 
 #
 ggplot(df_model_criteria_summary[!grepl('auc',variable),], aes(x = round(v0,3), y = M, color = type)) + 

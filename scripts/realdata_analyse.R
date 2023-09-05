@@ -180,13 +180,15 @@ for(i in 1:nperm){
 
 cat('p-value is ',(sum(average_perm > average_contr_genes) + 1)/(nperm + 1),'\n')
 
-contr_genes_id <- which(rownames(V) %in% contr_genes)
-print(exactRankTests::perm.test(degree_gmss[contr_genes_id] - degree_gm[contr_genes_id],
-                                degree_gmss - degree_gm))
 
+# contr_genes_id <- which(rownames(V) %in% contr_genes)
+# print(exactRankTests::perm.test(degree_gmss[contr_genes_id] - degree_gm[contr_genes_id],
+#                                 degree_gmss - degree_gm))
+#
 # uncontr_genes_id <- which(!genes %in% contr_genes)
 # print(exactRankTests::perm.test(degree_gmss[contr_genes_id] - degree_gm[contr_genes_id],
 #                           degree_gmss[uncontr_genes_id] - degree_gm[uncontr_genes_id]))
+#
 # ggsave(g, filename = "realdata_GMSS_GM_degree_diff_by_regulation.pdf",width = 4, height = 3.5)
 
 
