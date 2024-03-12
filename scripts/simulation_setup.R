@@ -1,53 +1,75 @@
+library(navigm) 
 library(ggplot2)
-library(navigm)
 
 # Set up args for the simulation
 #
 
 # base
-args <- list(corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
 
-# low 
-args <- list(Q=3, zeta=-1.55, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# low
+args <- list(Q = 3, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T) 
 
 # null
-args <- list(Q0=0, zeta = -1.85, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = F, hub = F)
+args <- list(Q0 = 0, zeta = -1.85, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = F, hub = F) 
 
 # sensitivity
 #
-args <- list(P=50, corr= 0, zeta = -1.55, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(N=100, corr= 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(N=100, P=50, corr= 0,zeta = -1.55, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 50, corr = 0, zeta = -1.5, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T) ## check
+args <- list(N = 100, corr = 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 100, P = 50, corr = 0, zeta = -1.5, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T) ## check
 
-args <- list(Q=20, corr= 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(Q=100, corr= 0, zeta = -1.52, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(Q0=1, corr= 0, zeta = -0.75, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(Q0=5, corr= 0, zeta = -2.1, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(zeta=-1.25, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(zeta=-1.75, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(noise = 0.2, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(noise = 0.3, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 20, corr = 0, zeta = -1.53, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 100, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q0 = 1, corr = 0, zeta = -0.79, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T) # check
+args <- list(Q0 = 5, corr = 0, zeta = -2.16, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(zeta = -1.21, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(zeta = -1.8, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(noise = 0.2, zeta = -1.55, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(noise = 0.3, zeta = -1.56, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
 
 # runtime
 #
-args <- list(N = 20, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(N = 50, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(N = 150, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(N = 250, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(N = 300, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 200, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 300, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 400, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 500, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 600, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 800, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(Q = 1000, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(Q = 10000, corr = 0, zeta = -1.54, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
 
-# args <- list(P = 20, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(P = 150, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(P = 200, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(P = 250, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
-args <- list(P = 300, zeta= -1.55, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+args <- list(N = 20, zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 50, zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(N = 300, zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 400, zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 500, zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 50, Q = 100, beta0 = 1, zeta = -3, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+
+args <- list(P = 200, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 300, zeta = -1.52, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 400, zeta = -1.55, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 500, zeta = -1.53, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 600, zeta = -1.54,  corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+args <- list(P = 800, zeta = -1.55, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(P = 1000, zeta = -1.55, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
+
+# args <- list(N = 20, P = 200, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 50, P = 200, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 100, P = 200, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 200, P = 200, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+# args <- list(N = 300, P = 200, zeta = -1.54, corr = 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
+
 
 # args <- list(Q = 150, corr= 0, col = NULL, blocks = NULL, dpar = NULL, codata = T, hub = T)
 # empirical = T in the function simulate_auxiliary_matrix requires P >= Q
 
 # number of replicates
 #
-nrep <- 32
+nrep <- 100
 verbose <- T
 
 # default values
@@ -100,7 +122,8 @@ if (codata) {
 # 
 dirname <-
   paste0(
-    '~/simulation_n_',
+    # '/rds-d6/user/xx825/hpc-work/navigm_out_revised/simulation_n_',
+    "~/simulation_n_",
     N,
     '_p_',
     P,
@@ -208,7 +231,7 @@ for(seed in 1:nrep){
   # generate and plot auxiliary variables
   # even codata = F generate V for algorithm testing. 
   #
-  V <- simulate_auxiliary_matrix(P, Q, min_gene = round(0.05 * P)) 
+  V <- simulate_auxiliary_matrix(P, Q, min_gene = round(0.05 * P), empirical = F) 
   if(verbose == T){
     cat('Active variables per nodes: \n')
     print(quantile(apply(V, 2, function(x)sum(x>0.5))))
@@ -272,7 +295,14 @@ for(seed in 1:nrep){
     #
     sig2_beta0 <- 0.1
     beta_true <- rep(0, Q)
-    beta_true[nonzero_id] <- rlnorm(Q0, log(beta0), sig2_beta0)
+    if(beta0 > 0){
+      beta_true[nonzero_id] <- rlnorm(Q0, log(beta0), sig2_beta0)
+    }else{
+      # not work well
+      beta_true[nonzero_id] <- - rlnorm(Q0, log(-beta0), sig2_beta0)
+    }
+   
+    # negative zeta avoid hub pattern -0.1 beta
     theta <- V %*% matrix(beta_true, ncol = 1)
     pe <- matrix(theta, nrow = P, ncol = P)
     pe <- pe + t(pe) + zeta
@@ -397,42 +427,20 @@ if(verbose){
   print(quantile(sparsity_v))
   print(mean(sparsity_v))
 }
-
-
-
-
-# sparsity_m <- matrix(nrow = 23, ncol = 32)
+# 
+# #
+# dir_names <- list.dirs("/rds-d6/user/xx825/hpc-work/navigm_out_revised",full.names = T)
+# dir_names <- grep("simulation_n", dir_names, value = T)
+# dir_names <- grep("q_10000", dir_names, value = T,invert = T)
+# sparsity_m <- matrix(nrow = length(dir_names), ncol = 100)
 # count <- 0
-# for (dir in c('~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0/',
-#               '~/simulation_n_200_p_100_q_3_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_0_zeta_-1.85_noise_0.1_beta0_0.5_codata_FALSE_hub_FALSE_corr_0',
-#               '~/simulation_n_200_p_50_q_50_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_100_p_100_q_50_q0_3_zeta_-1.52_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_100_p_50_q_50_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_20_q0_3_zeta_-1.52_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_100_q0_3_zeta_-1.52_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_1_zeta_-0.75_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_5_zeta_-2.1_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.25_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.75_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.5_noise_0.2_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_100_q_50_q0_3_zeta_-1.5_noise_0.3_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_20_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_50_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_150_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_250_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_300_p_100_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_150_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_200_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_250_q_50_q0_3_zeta_-1.5_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0',
-#               '~/simulation_n_200_p_300_q_50_q0_3_zeta_-1.55_noise_0.1_beta0_0.5_codata_TRUE_hub_TRUE_corr_0')){
-#   setwd(dir)
-#   count <- count + 1
-#   for(i in 1:32){
-#     load(paste0('data_seed',i,'.rda'))
-#     bool_up <- upper.tri(net$A)
-#     sparsity_m[count,i] <- sum(net$A[bool_up] == 1)/sum(bool_up)
-#   }
+# for (dir in dir_names){
+#     setwd(dir)
+#     count <- count + 1
+#     for(i in 1:100){
+#         load(paste0('data_seed',i,'.rda'))
+#         bool_up <- upper.tri(net$A)
+#         sparsity_m[count,i] <- sum(net$A[bool_up] == 1)/sum(bool_up)
+#     }
 # }
-#
-# plot(apply(sparsity_m, 1, function(x)c(mean(x), median(x), min(x), max(x)))[1,-c(11,12)])
+# print(apply(sparsity_m, 1, mean))
