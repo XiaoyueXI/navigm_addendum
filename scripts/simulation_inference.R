@@ -11,14 +11,14 @@ option_list <- list(
   optparse::make_option(
     c("-v", "--stddev"),
     type = "integer",
-    default = 50,
+    default = 150,
     help = "priori knowledge on standard deviations of edge counts",
     dest = "stddev_edge"
   ),
   optparse::make_option(
     c("-m", "--mean"),
     type = "double",
-    default = 150,
+    default = 50,
     help = "priori knowledge on average edge counts",
     dest = "mean_edge"
   ),
@@ -49,6 +49,27 @@ option_list <- list(
     default = 2,
     help = "version of GM-ECM",
     dest = "version"
+  ), 
+  optparse::make_option(
+    c("-a", "--gridstart"),
+    type = "double",
+    default = 1e-2,
+    help = "start of grid search",
+    dest = "grid_start"
+  ),
+  optparse::make_option(
+    c("-b", "--gridend"),
+    type = "double",
+    default = 1,
+    help = "end of grid search",
+    dest = "grid_end"
+  ),
+  optparse::make_option(
+    c("-t", "--random_initial"),
+    type = "logical",
+    default = T,
+    help = "random beta initialisation",
+    dest = "bool_random_initial"
   )
 )
 
@@ -64,7 +85,7 @@ load(paste0('data_seed',seed,'.rda'))
 # 
 set.seed(seed)
 lambda <- 2
-v0_v <- s0_v <- seq(0.0001, 1, length.out = 16)
+v0_v <- s0_v <- seq(grid_start, grid_end, length.out = 16)
 v1 <- s1 <- 100
 Q <- ncol(V)
 P <- nrow(V)
@@ -86,9 +107,15 @@ list_hyper <- list(
   b_rho = P)
 
 #
+if(bool_random_initial){
+  mu_beta <- rnorm(Q)
+}else{
+  mu_beta <- rep(0,Q)
+}
+
 list_init <-
   list(
-    mu_beta = rnorm(Q),
+    mu_beta = mu_beta,
     sig2_inv_beta = rep(1, Q),
     alpha_tau = 1,
     beta_tau = 1,
@@ -131,6 +158,13 @@ save(out,
      net,
      V,
      beta_true,
-     file = paste0('out_',model,ifelse(is.null(version),'',paste0('_v',version)),'_',inference,'_seed_', seed,'_zeta_mean_',mean_edge, '_sd_',stddev_edge, '.rda'))
+     file = paste0('out_',model,ifelse(is.null(version),'',paste0('_v',version)),
+                   '_',inference,
+                   '_seed_', seed,
+                   '_zeta_mean_',mean_edge, 
+                   '_sd_',stddev_edge,
+                   ifelse(grid_start!=1e4, paste0("_gridstart_",grid_start), ""),
+                   ifelse(grid_end!=1, paste0("_gridend_",grid_end), ""),
+                   ifelse(bool_random_initial, "","_init0"), '.rda'))
 
 
