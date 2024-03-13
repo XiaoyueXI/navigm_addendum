@@ -33,6 +33,7 @@ print(str(V))
 # load expression data
 #
 load("~/Downloads/expression_data_monocytes_and_bcells_with_eQTL_PPI_LYZ_region.RData")
+# unstimulated
 Y <- expr_unstim[, rownames(V)]
 print(str(Y))
 
@@ -43,3 +44,40 @@ stopifnot(all(rownames(V) == colnames(Y)))
 
 #
 save(Y, V, file = paste0('~/realdata/realdata_cedar_fdr',fdr,'.rda'))
+
+# stimulated
+Y <- expr_ifn[, rownames(V)]
+print(str(Y))
+
+# check
+#
+stopifnot(all(rownames(V) == colnames(Y)))
+
+#
+save(Y, V, file = paste0('~/realdata/realdata_cedar_fdr',fdr,'_ifr.rda'))
+
+
+# # 
+# Y <- expr_lps2[, rownames(V)]
+# print(str(Y))
+# 
+# 
+# # check
+# #
+# stopifnot(all(rownames(V) == colnames(Y)))
+# 
+# #
+# save(Y, V, file = paste0('~/realdata/realdata_cedar_fdr',fdr,'_lps2.rda'))
+# 
+# 
+# # 
+# Y <- expr_lps24[, rownames(V)]
+# print(str(Y))
+# 
+# #
+# stopifnot(all(rownames(V) == colnames(Y)))
+# 
+# #
+# save(Y, V, file = paste0('~/realdata/realdata_cedar_fdr',fdr,'_lps24.rda'))
+# 
+
