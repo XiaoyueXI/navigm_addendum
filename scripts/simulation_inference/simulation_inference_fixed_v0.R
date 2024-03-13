@@ -1,4 +1,4 @@
-wlibrary(navigm)
+library(navigm)
 #
 option_list <- list(
   optparse::make_option(
