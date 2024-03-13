@@ -11,14 +11,14 @@ option_list <- list(
   optparse::make_option(
     c("-v", "--stddev"),
     type = "integer",
-    default = 50,
+    default = 150,
     help = "priori knowledge on standard deviations of edge counts",
     dest = "stddev_edge"
   ),
   optparse::make_option(
     c("-m", "--mean"),
     type = "double",
-    default = 150,
+    default = 50,
     help = "priori knowledge on average edge counts",
     dest = "mean_edge"
   ),
@@ -51,6 +51,13 @@ option_list <- list(
     dest = "version"
   ),
   optparse::make_option(
+    c("-l", "--label"),
+    type = "character",
+    default = "",
+    help = "data label",
+    dest = "label"
+  ),
+  optparse::make_option(
     c("-f", "--fdr"),
     type = "numeric",
     default = 0.2,
@@ -66,11 +73,14 @@ list2env(args, envir = .GlobalEnv)
 
 setwd(dir)
 
-load(paste0('realdata_cedar_fdr',fdr,'.rda'))
+cat("Load ", paste0('realdata_cedar_fdr',fdr,
+                     ifelse(label == "","",paste0("_",label)),'.rda'))
+load(paste0('realdata_cedar_fdr',fdr,
+            ifelse(label == "","",paste0("_",label)),'.rda'))
 
 # 
 lambda <- 2
-v0_v <- s0_v <- seq(0.0001, 1, length.out = 16)
+v0_v <- s0_v <- seq(0.01, 1, length.out = 16)
 v1 <- s1 <- 100
 Q <- ncol(V)
 P <- nrow(V)
@@ -97,7 +107,8 @@ if(is.na(seed)){
   set.seed(123)
   list_init <-
     list(
-      mu_beta = rnorm(Q),
+      # mu_beta = rnorm(Q),
+      mu_beta = rep(0, Q),
       sig2_inv_beta = rep(1, Q),
       alpha_tau = 1,
       beta_tau = 1,
@@ -139,6 +150,7 @@ if(is.na(seed)){
   tau2 <- list_init$alpha_sigma/list_init$beta_sigma
   o <- list_init$alpha_o/list_init$beta_o
   rho <- list_init$alpha_rho/list_init$beta_rho
+  
 }
 
 #
@@ -165,6 +177,13 @@ out <-
 save(out,
      Y,
      V,
-     file = paste0('out_',model,ifelse(is.null(version),'',paste0('_v',version)),'_',inference,ifelse(is.na(seed),'',paste0('_seed_', seed)),'_zeta_mean_',mean_edge, '_sd_',stddev_edge, '.rda'))
+     file = paste0('out_',model,
+                   ifelse(is.null(version),'',paste0('_v',version)),'_',
+                   inference,ifelse(is.na(seed),'',paste0('_seed_', seed)),
+                   '_zeta_mean_',mean_edge,
+                   '_sd_',stddev_edge, 
+                   ifelse(v0_v[1]!=1e4, paste0("_gridstart_",v0_v[1]), ""),
+                   ifelse(label == "","",paste0("_",label)), 
+                   ifelse(is.na(seed), "_init0",""),'.rda'))
 
 
